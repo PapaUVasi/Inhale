@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<style type="text/css">
+		html, body
+		{
+			margin: 0;
+			height: 100%;
+			overflow: hidden;
+		}
+		img
+		{
+			min-height: 100%;
+			min-width: 100%;
+			height: auto;
+			width: auto;
+			position: absolute;
+			top: -100%;
+			bottom: -100%;
+			left: -100%;
+			right: -100%;
+			margin: auto;
+		}
+		.progress-label
+		{
+			position: absolute;
+			left: 50%;
+			top: 4px;
+			font-weight: bold;
+			text-shadow: 1px 1px 0 #fff;
+		}
+	</style>
+	<script type="text/javascript" language="javascript" src="./js/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" language="JavaScript">
+		var mousedownID = -1;
+		function mdf(button) {
+			console.log(mousedownID);
+			var i = parseInt($("#i").val());
+			if (button == 0 && i < 2765) {
+				i = parseInt($("#i").val()) + 1;
+			}
+			if (button == 0 && i == 2765) {
+				i = 1;
+			}
+			if (button == 2 && i > 2) {
+				i = parseInt($("#i").val()) - 1;
+			}
+			if (button == 2 && i == 2) {
+				i = 2765;
+			}
+			$("#i").val(i);
+			$(im).attr("src", "./jpgframes/0_" + $("#i").val().padStart(5, "0") + ".jpg");
+		}
+		function mde(button) {
+			if ($("#soundplaying").val() != "yes") {
+				$("#progress-label").hide();
+				var snd = new Audio("./sounds/inhale.mp3");
+				snd.loop = true;
+				snd.play();
+				$("#soundplaying").val("yes");
+			} else {
+				var b = button;
+				if (mousedownID == -1) mousedownID = setInterval(mdf, 30, b);
+			}
+		}
+		function mue() {
+			if (mousedownID != -1) {
+				clearInterval(mousedownID);
+				mousedownID = -1;
+			}
+		}
+		function idle() { }
+		function kdf(code) {
+			var i = parseInt($("#i").val());
+			if (code == "ArrowUp" && i < 2765) {
+				i = parseInt($("#i").val()) + 1;
+			}
+			if (code == "ArrowUp" && i == 2765) {
+				i = 1;
+			}
+			if (code == "ArrowDown" && i > 2) {
+				i = parseInt($("#i").val()) - 1;
+			}
+			if (code == "ArrowDown" && i == 2) {
+				i = 2765;
+			}
+			$("#i").val(i);
+			$(im).attr("src", "./jpgframes/0_" + $("#i").val().padStart(5, "0") + ".jpg");
+		}
+		function preloadImages(toBeLoadedNumber, allImagesLoadedCallback) {
+			var loadedCounter = 0;
+			for (var i = 1; i <= toBeLoadedNumber; i++) {
+				preloadImage("./jpgframes/0_" + String(i).padStart(5, "0") + ".jpg", function () {
+					loadedCounter++;
+					$("#progress-label").text("Loading..." + Math.floor((100.0 * loadedCounter) / toBeLoadedNumber) + "%");
+					if (loadedCounter == toBeLoadedNumber) {
+						allImagesLoadedCallback();
+					}
+				});
+			}
+		}
+		function preloadImage(url, anImageLoadedCallback) {
+			var img = new Image();
+			img.onload = anImageLoadedCallback;
+			img.src = url;
+		}
+		$(window).load(function () {
+			preloadImages(2765, function () {
+				$("#progress-label").text("Complete!");
+				$("#whole").css("cursor", "pointer");
+				$("#im").css("cursor", "pointer");
+				$(im).attr("src", "./jpgframes/0_" + $("#i").val().padStart(5, "0") + ".jpg");
+			});
+		});
+	</script>
+	<title>Inhale</title>
+</head>
+<body>
+	<a href="javascript:idle()" id="whole" onkeydown="kdf(event.code);" onmousedown="mde(event.button);"
+		onmouseup="mue();" oncontextmenu="return false;" style="cursor: wait;">
+		<img id="im" src="" style="cursor: wait;" /></a>
+	<div id="progress-label" class="progress-label">
+		Loading...</div>
+	<input type="hidden" name="i" id="i" value="1" />
+	<input type="hidden" id="soundplaying" value="no" />
+</body>
+</html>
