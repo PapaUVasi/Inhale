@@ -2,25 +2,23 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
 	<style type="text/css">
 		html, body
 		{
 			margin: 0;
 			height: 100%;
 			overflow: hidden;
+			background-color: black;
+			cursor: wait;
 		}
 		img
 		{
-			min-height: 100%;
-			min-width: 100%;
-			height: auto;
-			width: auto;
 			position: absolute;
-			top: -100%;
-			bottom: -100%;
-			left: -100%;
-			right: -100%;
-			margin: auto;
+    			width: 100%;
+    			height: 100%;
+    			object-fit: contain;
 		}
 		.progress-label
 		{
@@ -35,16 +33,15 @@
 	<script type="text/javascript" language="JavaScript">
 		var mousedownID = -1;
 		function mdf(button) {
-			console.log(mousedownID);
 			var i = parseInt($("#i").val());
 			if (button == 0 && i < 2765) {
-				i = parseInt($("#i").val()) + 1;
+				i = i + 1;
 			}
 			if (button == 0 && i == 2765) {
-				i = 1;
+				i = 2;
 			}
 			if (button == 2 && i > 2) {
-				i = parseInt($("#i").val()) - 1;
+				i = i - 1;
 			}
 			if (button == 2 && i == 2) {
 				i = 2765;
@@ -55,13 +52,15 @@
 		function mde(button) {
 			if ($("#soundplaying").val() != "yes") {
 				$("#progress-label").hide();
-				var snd = new Audio("./sounds/Inhale.mp3");
-				snd.loop = true;
-				snd.play();
+			//	var snd = new Audio("./sounds/inhale.mp3");
+			//	snd.loop = true;
+			//	snd.play();
+				document.getElementById("sound").play();
+				document.getElementById("im").requestFullscreen();
 				$("#soundplaying").val("yes");
 			} else {
 				var b = button;
-				if (mousedownID == -1) mousedownID = setInterval(mdf, 30, b);
+				if (mousedownID == -1) mousedownID = setInterval(mdf, 50, b);
 			}
 		}
 		function mue() {
@@ -70,17 +69,38 @@
 				mousedownID = -1;
 			}
 		}
+		function te(nfingers) {
+//			$("#progress-label").text(nfingers);
+			mue();
+			if ($("#soundplaying").val() != "yes") {
+					$("#progress-label").hide();
+//					var snd = new Audio("./sounds/inhale.mp3");
+//					snd.loop = true;
+//					snd.play();
+					document.getElementById("sound").play();
+					document.getElementById("im").requestFullscreen();
+					$("#soundplaying").val("yes");
+			} 
+			else {
+					var b = 1;
+					if (nfingers == 1)
+						b = 0;
+					else if (nfingers == 2)
+						b = 2;
+					if (mousedownID == -1) mousedownID = setInterval(mdf, 50, b);
+			}
+		}
 		function idle() { }
 		function kdf(code) {
 			var i = parseInt($("#i").val());
 			if (code == "ArrowUp" && i < 2765) {
-				i = parseInt($("#i").val()) + 1;
+				i = i + 1;
 			}
 			if (code == "ArrowUp" && i == 2765) {
-				i = 1;
+				i = 2;
 			}
 			if (code == "ArrowDown" && i > 2) {
-				i = parseInt($("#i").val()) - 1;
+				i = i - 1;
 			}
 			if (code == "ArrowDown" && i == 2) {
 				i = 2765;
@@ -111,18 +131,23 @@
 				$("#whole").css("cursor", "pointer");
 				$("#im").css("cursor", "pointer");
 				$(im).attr("src", "./jpgframes/0_" + $("#i").val().padStart(5, "0") + ".jpg");
+				$("#im").css("visibility", "visible");
 			});
 		});
 	</script>
 	<title>Inhale</title>
 </head>
 <body>
-	<a href="javascript:idle()" id="whole" onkeydown="kdf(event.code);" onmousedown="mde(event.button);"
-		onmouseup="mue();" oncontextmenu="return false;" style="cursor: wait;">
-		<img id="im" src="" style="cursor: wait;" /></a>
+	<a href="javascript:idle()" id="whole" onkeydown="kdf(event.code);" 
+		onmousedown="mde(event.button);" onmouseup="mue();"   oncontextmenu="return false;" 
+		ontouchstart="te(event.touches.length);event.preventDefault();" ontouchend="te(event.touches.length);event.preventDefault();" >
+		<img id="im" src="" style="visibility: hidden;"  /></a>
 	<div id="progress-label" class="progress-label">
 		Loading...</div>
 	<input type="hidden" name="i" id="i" value="1" />
 	<input type="hidden" id="soundplaying" value="no" />
+	<audio id="sound"  loop prealod="auto" >
+		  <source src="./sounds/Inhale.mp3" type="audio/mpeg">
+	</audio>
 </body>
 </html>
