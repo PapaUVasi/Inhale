@@ -24,10 +24,18 @@
 		{
 			position: absolute;
 			left: 40%;
-			top: 48px;
+			top: 24px;
 			font-size: xxx-large;
 			font-weight: bold;
 			text-shadow: 2px 2px 0 #fff;
+		}
+		.cache
+		{			
+			position:absolute;
+			z-index:-1000;
+			opacity:0; 
+			width:1px; 
+			height:1px;
 		}
 	</style>
 	<script type="text/javascript" language="javascript" src="./js/jquery-1.9.1.min.js"></script>
@@ -60,6 +68,8 @@
 			var img = new Image();
 			img.onload = anImageLoadedCallback;
 			img.src = url;
+			img.style = "position:absolute";
+    			document.getElementById("cache").appendChild(img);
 		}
 		function startplay(){
 			if($("#i").val()==1){
@@ -135,6 +145,7 @@
 		<img id="im" src="" style="visibility: hidden;"  />
 	</a>
 	<div id="progress-label" class="progress-label">Loading...</div>
+	<div id="cache" class="cache"></div>
 	<input type="hidden" name="i" id="i" value="1" />
 	<audio id="sound"  loop prealod="auto" >
 		  <source src="./sounds/Inhale.mp3" type="audio/mpeg">
