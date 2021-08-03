@@ -23,91 +23,27 @@
 		.progress-label
 		{
 			position: absolute;
-			left: 50%;
-			top: 4px;
+			left: 40%;
+			top: 48px;
+			font-size: xxx-large;
 			font-weight: bold;
-			text-shadow: 1px 1px 0 #fff;
+			text-shadow: 2px 2px 0 #fff;
 		}
 	</style>
 	<script type="text/javascript" language="javascript" src="./js/jquery-1.9.1.min.js"></script>
 	<script type="text/javascript" language="JavaScript">
+		const nFrames = 2765;
 		var mousedownID = -1;
-		function mdf(button) {
-			var i = parseInt($("#i").val());
-			if (button == 0 && i < 2765) {
-				i = i + 1;
-			}
-			if (button == 0 && i == 2765) {
-				i = 2;
-			}
-			if (button == 2 && i > 2) {
-				i = i - 1;
-			}
-			if (button == 2 && i == 2) {
-				i = 2765;
-			}
-			$("#i").val(i);
-			$(im).attr("src", "./jpgframes/0_" + $("#i").val().padStart(5, "0") + ".jpg");
-		}
-		function mde(button) {
-			if ($("#soundplaying").val() != "yes") {
-				$("#progress-label").hide();
-			//	var snd = new Audio("./sounds/inhale.mp3");
-			//	snd.loop = true;
-			//	snd.play();
-				document.getElementById("sound").play();
-				document.getElementById("im").requestFullscreen();
-				$("#soundplaying").val("yes");
-			} else {
-				var b = button;
-				if (mousedownID == -1) mousedownID = setInterval(mdf, 50, b);
-			}
-		}
-		function mue() {
-			if (mousedownID != -1) {
-				clearInterval(mousedownID);
-				mousedownID = -1;
-			}
-		}
-		function te(nfingers) {
-//			$("#progress-label").text(nfingers);
-			mue();
-			if ($("#soundplaying").val() != "yes") {
-					$("#progress-label").hide();
-//					var snd = new Audio("./sounds/inhale.mp3");
-//					snd.loop = true;
-//					snd.play();
-					document.getElementById("sound").play();
-					document.getElementById("im").requestFullscreen();
-					$("#soundplaying").val("yes");
-			} 
-			else {
-					var b = 1;
-					if (nfingers == 1)
-						b = 0;
-					else if (nfingers == 2)
-						b = 2;
-					if (mousedownID == -1) mousedownID = setInterval(mdf, 50, b);
-			}
-		}
-		function idle() { }
-		function kdf(code) {
-			var i = parseInt($("#i").val());
-			if (code == "ArrowUp" && i < 2765) {
-				i = i + 1;
-			}
-			if (code == "ArrowUp" && i == 2765) {
-				i = 2;
-			}
-			if (code == "ArrowDown" && i > 2) {
-				i = i - 1;
-			}
-			if (code == "ArrowDown" && i == 2) {
-				i = 2765;
-			}
-			$("#i").val(i);
-			$(im).attr("src", "./jpgframes/0_" + $("#i").val().padStart(5, "0") + ".jpg");
-		}
+		$(window).load(function () {
+			preloadImages(nFrames, function () {
+				$("#progress-label").text("Complete!");
+				$("#whole").css("cursor", "pointer");
+				$("#im").css("cursor", "pointer");
+				$(im).attr("src", "./jpgframes/0_" + $("#i").val().padStart(5, "0") + ".jpg");
+				$("#im").css("visibility", "visible");
+				document.getElementById("im").addEventListener('click', startplay, true);
+			});
+		});
 		function preloadImages(toBeLoadedNumber, allImagesLoadedCallback) {
 			var loadedCounter = 0;
 			for (var i = 1; i <= toBeLoadedNumber; i++) {
@@ -125,27 +61,81 @@
 			img.onload = anImageLoadedCallback;
 			img.src = url;
 		}
-		$(window).load(function () {
-			preloadImages(2765, function () {
-				$("#progress-label").text("Complete!");
-				$("#whole").css("cursor", "pointer");
-				$("#im").css("cursor", "pointer");
-				$(im).attr("src", "./jpgframes/0_" + $("#i").val().padStart(5, "0") + ".jpg");
-				$("#im").css("visibility", "visible");
-			});
-		});
+		function startplay(){
+			if($("#i").val()==1){
+				document.getElementById("im").requestFullscreen();
+				$("#progress-label").hide();
+				$("#i").val("2");
+				document.getElementById("sound").play();
+				document.getElementById("whole").addEventListener('keydown', keyboard, true); 
+				document.getElementById("whole").addEventListener('mousedown', mousedown, true); 
+				document.getElementById("whole").addEventListener('mouseup', mouseup, true); 
+				document.getElementById("whole").addEventListener('touchstart', touch, true); 
+				document.getElementById("whole").addEventListener('touchend', touch, true); 
+			}
+		}
+		function keyboard(event) {
+			var code=event.code;
+			if (code == "ArrowUp") 
+				setframe(0);
+			else if (code == "ArrowDown") 
+				setframe(2);
+		}
+		function mousedown(event) {
+			var b = event.button;
+			if (mousedownID == -1) mousedownID = setInterval(setframe, 50, b);
+		}
+		function mouseup() {
+			if (mousedownID != -1) {
+				clearInterval(mousedownID);
+				mousedownID = -1;
+			}
+		}
+		function touch(event) {
+			var nfingers = event.touches.length;
+			mouseup();
+			var b = 1;
+			if (nfingers == 1)
+					b = 0;
+			else if (nfingers == 2)
+					b = 2;
+			if (mousedownID == -1) mousedownID = setInterval(setframe, 50, b);
+		}
+		function setframe(button) {
+			var i = parseInt($("#i").val());
+			if (button == 0 && i < nFrames) {
+				i = i + 1;
+			}
+			else if (button == 0 && i == nFrames) {
+				i = 2;
+			}
+			else if (button == 2 && i > 2) {
+				i = i - 1;
+			}
+			else if (button == 2 && i == 2) {
+				i = nFrames;
+			}
+			$("#i").val(i);
+			$(im).attr("src", "./jpgframes/0_" + $("#i").val().padStart(5, "0") + ".jpg");
+		}
+		function idle() { }
 	</script>
 	<title>Inhale</title>
 </head>
 <body>
-	<a href="javascript:idle()" id="whole" onkeydown="kdf(event.code);" 
-		onmousedown="mde(event.button);" onmouseup="mue();"   oncontextmenu="return false;" 
-		ontouchstart="te(event.touches.length);event.preventDefault();" ontouchend="te(event.touches.length);event.preventDefault();" >
-		<img id="im" src="" style="visibility: hidden;"  /></a>
-	<div id="progress-label" class="progress-label">
-		Loading...</div>
+	<a href="javascript:idle()" id="whole" 
+		oncontextmenu="return false;" 
+		ontouchmove="return false;" 
+		ontouchcancel="return false;" 
+		ontouchforcechange="return false;"  
+		ongesturestart="return false;"
+		ongesturechange="return false;"
+		ongestureend="return false;" 
+	>
+		<img id="im" src="" style="visibility: hidden;"  />
+	</a>
+	<div id="progress-label" class="progress-label">Loading...</div>
 	<input type="hidden" name="i" id="i" value="1" />
-	<input type="hidden" id="soundplaying" value="no" />
 	<audio id="sound"  loop prealod="auto" >
 		  <source src="./sounds/Inhale.mp3" type="audio/mpeg">
 	</audio>
