@@ -92,16 +92,19 @@
 				setframe(2);
 		}
 		function mousedown(event) {
+			event.preventDefault();
 			var b = event.button;
 			if (mousedownID == -1) mousedownID = setInterval(setframe, 50, b);
 		}
 		function mouseup() {
+			event.preventDefault();
 			if (mousedownID != -1) {
 				clearInterval(mousedownID);
 				mousedownID = -1;
 			}
 		}
 		function touch(event) {
+			event.preventDefault();
 			var nfingers = event.touches.length;
 			mouseup();
 			var b = 1;
@@ -134,13 +137,13 @@
 </head>
 <body>
 	<a href="javascript:idle()" id="whole" 
-		oncontextmenu="return false;" 
-		ontouchmove="return false;" 
-		ontouchcancel="return false;" 
-		ontouchforcechange="return false;"  
-		ongesturestart="return false;"
-		ongesturechange="return false;"
-		ongestureend="return false;" 
+		oncontextmenu="event.preventDefault();" 
+		ontouchmove="event.preventDefault();" 
+		ontouchcancel="event.preventDefault();" 
+		ontouchforcechange="event.preventDefault();"  
+		ongesturestart="event.preventDefault();"
+		ongesturechange="event.preventDefault();"
+		ongestureend="event.preventDefault();" 
 	>
 		<img id="im" src="" style="visibility: hidden;"  />
 	</a>
