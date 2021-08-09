@@ -40,7 +40,7 @@
 	</style>
 	<script type="text/javascript" language="javascript" src="./js/jquery-1.9.1.min.js"></script>
 	<script type="text/javascript" language="JavaScript">
-		const nFrames = 2765;
+		const nFrames = 157; //2765;
 		var mousedownID = -1;
 		$(window).load(function () {
 			preloadImages(nFrames, function () {
@@ -49,7 +49,7 @@
 				$("#im").css("cursor", "pointer");
 				$(im).attr("src", "./jpgframes/0_" + $("#i").val().padStart(5, "0") + ".jpg");
 				$("#im").css("visibility", "visible");
-				document.getElementById("im").addEventListener('click', startplay, true);
+				document.getElementById("im").addEventListener('click', startplay);
 			});
 		});
 		function preloadImages(toBeLoadedNumber, allImagesLoadedCallback) {
@@ -71,17 +71,27 @@
 			img.style = "position:absolute";
     			document.getElementById("cache").appendChild(img);
 		}
-		function startplay(){
+		function startplay(event){
 			if($("#i").val()==1){
-				document.getElementById("im").requestFullscreen();
+				fullScreen(document.getElementById("im"));
 				$("#progress-label").hide();
 				$("#i").val("2");
 				document.getElementById("sound").play();
-				document.getElementById("whole").addEventListener('keydown', keyboard, true); 
-				document.getElementById("whole").addEventListener('mousedown', mousedown, true); 
-				document.getElementById("whole").addEventListener('mouseup', mouseup, true); 
-				document.getElementById("whole").addEventListener('touchstart', touch, true); 
-				document.getElementById("whole").addEventListener('touchend', touch, true); 
+				document.getElementById("whole").addEventListener('keydown', keyboard); 
+				document.getElementById("im").addEventListener('mousedown', mousedown); 
+				document.getElementById("im").addEventListener('mouseup', mouseup); 
+				document.getElementById("im").addEventListener('touchstart', touch); 
+				document.getElementById("im").addEventListener('touchend', touch); 
+				event.target.removeEventListener('click', startplay);
+			}
+		}
+		function fullScreen(element) {
+			if(element.requestFullscreen) {
+				element.requestFullscreen();
+			} else if(element.webkitrequestFullscreen) {
+				element.webkitRequestFullscreen();
+			} else if(element.mozRequestFullscreen) {
+				element.mozRequestFullScreen();
 			}
 		}
 		function keyboard(event) {
@@ -137,15 +147,23 @@
 </head>
 <body>
 	<a href="javascript:idle()" id="whole" 
-		oncontextmenu="event.preventDefault();" 
-		ontouchmove="event.preventDefault();" 
-		ontouchcancel="event.preventDefault();" 
-		ontouchforcechange="event.preventDefault();"  
-		ongesturestart="event.preventDefault();"
-		ongesturechange="event.preventDefault();"
-		ongestureend="event.preventDefault();" 
+		oncontextmenu="event.preventDefault(); return false;" 
+		ontouchmove="event.preventDefault(); return false;" 
+		ontouchcancel="event.preventDefault(); return false;" 
+		ontouchforcechange="event.preventDefault(); return false;"  
+		ongesturestart="event.preventDefault(); return false;"
+		ongesturechange="event.preventDefault(); return false;"
+		ongestureend="event.preventDefault(); return false;" 
 	>
-		<img id="im" src="" style="visibility: hidden;"  />
+		<img id="im" src="" style="visibility: hidden;" 
+			oncontextmenu="event.preventDefault(); return false;" 
+			ontouchmove="event.preventDefault(); return false;" 
+			ontouchcancel="event.preventDefault(); return false;" 
+			ontouchforcechange="event.preventDefault(); return false;"  
+			ongesturestart="event.preventDefault(); return false;"
+			ongesturechange="event.preventDefault(); return false;"
+			ongestureend="event.preventDefault(); return false;"  
+		/>
 	</a>
 	<div id="progress-label" class="progress-label">Loading...</div>
 	<div id="cache" class="cache"></div>
